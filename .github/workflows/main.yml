@@ -11,7 +11,7 @@ on:
       - develop
 
 jobs:
-  test-backend:
+  test-backend: 
     runs-on: ubuntu-22.04
     steps:
       # Étape 1 : Récupération du code source
@@ -25,7 +25,7 @@ jobs:
           java-version: 17
           distribution: temurin
 
-      # Étape 3 : Construction, tests et analyse SonarCloud avec Maven
+      # Étape 3 : Construction et test avec Maven et analyse SonarCloud
       - name: Build and test with Maven and SonarCloud
         run: mvn -B verify sonar:sonar \
           -Dsonar.projectKey=devops-2024 \
