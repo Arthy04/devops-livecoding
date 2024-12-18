@@ -14,7 +14,7 @@ jobs:
   test-backend: 
     runs-on: ubuntu-22.04
     steps:
-      # Étape 1 : Récupération du code source
+      # Étape 1 : Récupération du code sourc
       - name: Checkout code
         uses: actions/checkout@v2.5.0
 
