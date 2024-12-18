@@ -1,6 +1,6 @@
-name: CI DevOps 2024
-
-on:
+ name: CI DevOps 2024
+ 
+ on:
   push:
     branches:
       - main
@@ -10,7 +10,7 @@ on:
       - main
       - develop
 
-jobs:
+ jobs:
   test-backend: 
     runs-on: ubuntu-22.04
     steps:
@@ -25,18 +25,9 @@ jobs:
           java-version: 17
           distribution: temurin
 
-      # Étape 3 : Construction et test avec Maven
+      # Étape 3 : Construction et test avec Mave
       - name: Build and test with Maven
         run: mvn clean verify --file ./simple-api/pom.xml
-
-      # Étape 4 : Analyse SonarCloud
-      - name: SonarCloud Analysis
-        run: mvn -B verify sonar:sonar \
-          -Dsonar.projectKey=Arthy04_devops-livecoding \
-          -Dsonar.organization=Arthy04 \
-          -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
-          --file ./simple-api/pom.xml
 
   build-and-push-docker-image:
     needs: test-backend
