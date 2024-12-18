@@ -8,16 +8,18 @@ on:
 
 jobs:
   # Job pour les tests backend (CI)
-  test-backend:
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v2.5.0
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: 17
-      - name: Build and test with Maven
-        run: mvn clean verify
+test-backend:
+  runs-on: ubuntu-22.04
+  steps:
+    - uses: actions/checkout@v2.5.0
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: 17
+        distribution: 'adoptopenjdk'
+    - name: Build and test with Maven
+      run: mvn clean verify
+
 
   # Job pour construire et pousser l'image Docker (CD)
   build-and-push-docker-image:
