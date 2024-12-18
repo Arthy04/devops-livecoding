@@ -10,7 +10,7 @@ on:
 jobs:
   build:
     name: Build and analyze
-    runs-on: ubuntu-22.04  # Utilisation explicite d'Ubuntu 22.04 pour éviter les futurs problèmes liés à "ubuntu-latest"
+    runs-on: ubuntu-22.04
     
     steps:
       # Étape 1 : Récupérer le code source
@@ -24,7 +24,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: 17
-          distribution: 'zulu'  # Options alternatives : 'temurin', 'adopt'
+          distribution: 'zulu'
 
       # Étape 3 : Cacher les packages SonarQube
       - name: Cache SonarQube packages
@@ -42,9 +42,13 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      # Étape 5 : Construire et analyser le projet
+      # Étape 5 : Aller dans le répertoire du projet Maven
+      - name: Navigate to Maven project directory
+        working-directory: simple-api
+
+      # Étape 6 : Construire et analyser le projet
       - name: Build and analyze
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Requis pour obtenir les informations sur les PR, le cas échéant
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # Jeton SonarCloud configuré dans les Secrets
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Arthy04_devops-livecoding
