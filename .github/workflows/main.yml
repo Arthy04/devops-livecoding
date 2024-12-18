@@ -14,7 +14,7 @@ jobs:
   test-backend: 
     runs-on: ubuntu-22.04
     steps:
-      # Étape 1 : Récupération du code sourc
+      # Étape 1 : Récupération du code source
       - name: Checkout code
         uses: actions/checkout@v2.5.0
 
@@ -28,6 +28,18 @@ jobs:
       # Étape 3 : Construction et test avec Maven
       - name: Build and test with Maven
         run: mvn clean verify --file ./simple-api/pom.xml
+
+      # Étape 4 : Analyse SonarCloud
+      - name: SonarCloud Analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          mvn sonar:sonar \
+            -Dsonar.projectKey=Arthy04_devops-livecoding \
+            -Dsonar.organization=Arthy04 \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+            --file ./simple-api/pom.xml
 
   build-and-push-docker-image:
     needs: test-backend
