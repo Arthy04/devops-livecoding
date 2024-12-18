@@ -1,35 +1,31 @@
-name: CI/CD Pipeline
+name: CI devops 2024
+
 on:
+  # Le pipeline s'exécutera sur les branches main et develop lors des pushs ou des pull requests
   push:
     branches:
       - main
       - develop
   pull_request:
+    branches:
+      - main
+      - develop
 
 jobs:
-  # Job pour les tests backend (CI)
-  test-backend:
+  test-backend: 
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2.5.0
+      # Étape 1 : Récupération du code source
+      - name: Checkout code
+        uses: actions/checkout@v2.5.0
+
+      # Étape 2 : Configuration de Java JDK 17
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: 17
+          distribution: temurin
+
+      # Étape 3 : Construction et test avec Maven
       - name: Build and test with Maven
-        run: mvn clean verify
-
-  # Job pour construire et pousser l'image Docker (CD)
-  build-and-push-docker-image:
-    needs: test-backend  # Ce job dépend du job test-backend
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2.5.0
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v3
-        with:
-          context: ./simple-api  # Assurez-vous que le chemin est correct (répertoire où se trouve le Dockerfile)
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/devops-livecoding:latest
-          push: ${{ github.ref == 'refs/heads/main' }}  # Le push se fait uniquement si la branche est 'main'
+        run: mvn clean verify --file ./simple-api/pom.xml
