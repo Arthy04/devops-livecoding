@@ -1,6 +1,6 @@
- name: CI DevOps 2024
- 
- on:
+name: CI DevOps 2024
+
+on:
   push:
     branches:
       - main
@@ -10,13 +10,13 @@
       - main
       - develop
 
- jobs:
+jobs:
   test-backend: 
     runs-on: ubuntu-22.04
     steps:
       # Étape 1 : Récupération du code source
       - name: Checkout code
-        uses: actions/checkout@v2.5.0
+        uses: actions/checkout@v3  # Mise à jour vers v3
 
       # Étape 2 : Configuration de Java JDK 17
       - name: Set up JDK 17
@@ -25,7 +25,7 @@
           java-version: 17
           distribution: temurin
 
-      # Étape 3 : Construction et test avec Mave
+      # Étape 3 : Construction et test avec Maven
       - name: Build and test with Maven
         run: mvn clean verify --file ./simple-api/pom.xml
 
@@ -47,7 +47,7 @@
     steps:
       # Étape 1 : Récupération du code source
       - name: Checkout code
-        uses: actions/checkout@v2.5.0
+        uses: actions/checkout@v3  # Mise à jour vers v3
 
       # Étape 2 : Connexion à DockerHub
       - name: Login to DockerHub
@@ -61,3 +61,7 @@
           context: ./simple-api
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-simple-api:latest
           push: ${{ github.ref == 'refs/heads/main' }}
+
+      # Optionnel : Déconnexion de DockerHub
+      - name: Logout from DockerHub
+        run: docker logout
