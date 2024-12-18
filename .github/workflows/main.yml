@@ -25,11 +25,15 @@ jobs:
           java-version: 17
           distribution: temurin
 
-      # Étape 3 : Construction et test avec Maven et analyse SonarCloud
-      - name: Build and test with Maven and SonarCloud
+      # Étape 3 : Construction et test avec Maven
+      - name: Build and test with Maven
+        run: mvn clean verify --file ./simple-api/pom.xml
+
+      # Étape 4 : Exécution de l'analyse SonarCloud
+      - name: Run SonarCloud analysis
         run: mvn -B verify sonar:sonar \
-          -Dsonar.projectKey=devops-2024 \
-          -Dsonar.organization=devops-school \
+          -Dsonar.projectKey=Arthy04_devops-livecoding \
+          -Dsonar.organization=arthy04 \
           -Dsonar.host.url=https://sonarcloud.io \
           -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
           --file ./simple-api/pom.xml
