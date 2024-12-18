@@ -39,7 +39,8 @@ jobs:
 
       # Étape 2 : Connexion à DockerHub
       - name: Login to DockerHub
-        run: echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+        run: |
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
       # Étape 3 : Construction de l'image et push sur DockerHub
       - name: Build image and push backend
