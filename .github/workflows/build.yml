@@ -42,13 +42,20 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      # Étape 5 : Aller dans le répertoire du projet Maven
+      # Étape 5 : Naviguer dans le répertoire contenant le projet
       - name: Navigate to Maven project directory
         working-directory: simple-api
+        run: ls -la  # Debug pour vérifier le contenu du répertoire
 
-      # Étape 6 : Construire et analyser le projet
+      # Étape 6 : Construire et analyser avec SonarCloud
       - name: Build and analyze
+        working-directory: simple-api  # Définit le répertoire contenant le pom.xml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Arthy04_devops-livecoding
+        run: |
+          mvn -B verify sonar:sonar \
+            -Dsonar.projectKey=Arthy04_devops-livecoding \
+            -Dsonar.organization=arthy04 \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
