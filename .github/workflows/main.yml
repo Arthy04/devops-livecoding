@@ -11,7 +11,8 @@ on:
       - develop
 
 jobs:
-  test-backend: 
+  # Job pour tester l'application backend
+  test-backend:
     runs-on: ubuntu-22.04
     steps:
       # Étape 1 : Récupération du code source
@@ -29,15 +30,16 @@ jobs:
       - name: Build and test with Maven
         run: mvn clean verify --file ./simple-api/pom.xml
 
-      # Étape 4 : Exécution de l'analyse SonarCloud
-      - name: Run SonarCloud analysis
+      # Étape 4 : Analyse de la qualité du code avec SonarCloud
+      - name: SonarCloud analysis
         run: mvn -B verify sonar:sonar \
-          -Dsonar.projectKey=Arthy04_devops-livecoding \
-          -Dsonar.organization=arthy04 \
-          -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
-          --file ./simple-api/pom.xml
+              -Dsonar.projectKey=Arthy04_devops-livecoding \
+              -Dsonar.organization=arthy04 \
+              -Dsonar.host.url=https://sonarcloud.io \
+              -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+              --file ./simple-api/pom.xml
 
+  # Job pour construire et pousser l'image Docker
   build-and-push-docker-image:
     needs: test-backend
     runs-on: ubuntu-22.04
@@ -51,10 +53,26 @@ jobs:
         run: |
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-      # Étape 3 : Construction de l'image et push sur DockerHub
+      # Étape 3 : Construction de l'image et push sur DockerHub pour l'API backend
       - name: Build image and push backend
         uses: docker/build-push-action@v3
         with:
           context: ./simple-api
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-simple-api:latest
+          push: ${{ github.ref == 'refs/heads/main' }}
+
+      # Étape 4 : Construction de l'image et push sur DockerHub pour la base de données
+      - name: Build image and push database
+        uses: docker/build-push-action@v3
+        with:
+          context: ./database
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-database:latest
+          push: ${{ github.ref == 'refs/heads/main' }}
+
+      # Étape 5 : Construction de l'image et push sur DockerHub pour httpd
+      - name: Build image and push httpd
+        uses: docker/build-push-action@v3
+        with:
+          context: ./httpd
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-httpd:latest
           push: ${{ github.ref == 'refs/heads/main' }}
