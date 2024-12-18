@@ -1,6 +1,6 @@
- name: CI DevOps 2024
- 
- on:
+name: CI DevOps 2024
+
+on:
   push:
     branches:
       - main
@@ -10,7 +10,7 @@
       - main
       - develop
 
- jobs:
+jobs:
   test-backend: 
     runs-on: ubuntu-22.04
     steps:
@@ -25,7 +25,7 @@
           java-version: 17
           distribution: temurin
 
-      # Étape 3 : Construction et test avec Mave
+      # Étape 3 : Construction et test avec Maven
       - name: Build and test with Maven
         run: mvn clean verify --file ./simple-api/pom.xml
 
