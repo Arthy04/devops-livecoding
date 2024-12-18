@@ -8,18 +8,17 @@ on:
 
 jobs:
   # Job pour les tests backend (CI)
-test-backend:
-  runs-on: ubuntu-22.04
-  steps:
-    - uses: actions/checkout@v2.5.0
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: 17
-        distribution: 'adoptopenjdk'
-    - name: Build and test with Maven
-      run: mvn clean verify
-
+  test-backend:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v2.5.0
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'adoptopenjdk'  # Spécifiez la distribution JDK à utiliser
+      - name: Build and test with Maven
+        run: mvn clean verify
 
   # Job pour construire et pousser l'image Docker (CD)
   build-and-push-docker-image:
@@ -35,3 +34,18 @@ test-backend:
           context: ./simple-api  # Assurez-vous que le chemin est correct (répertoire où se trouve le Dockerfile)
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/devops-livecoding:latest
           push: ${{ github.ref == 'refs/heads/main' }}  # Le push se fait uniquement si la branche est 'main'
+
+  # Job pour l'analyse de la qualité du code avec SonarCloud
+  analyze-with-sonarcloud:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2.5.0
+
+      - name: Analyze with SonarCloud
+        run: mvn -B verify sonar:sonar \
+          -Dsonar.projectKey=devops-livecoding \
+          -Dsonar.organization=YOUR_ORGANIZATION_KEY \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+          --file ./simple-api/pom.xml
